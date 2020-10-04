@@ -1,28 +1,39 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div>
+        <h1>Bluetooth Devices</h1>
+
+        <ul>
+            <li v-for="(device, index) in devices" :key="index">
+                {{ device.address }}
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
-</script>
+    data() {
+        return {
+            devices: [],
+        };
+    },
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+    created() {
+        this.sockets.subscribe("discover", (data) => {
+            console.log(data);
+        });
+    },
+
+    sockets: {
+        connect: function () {
+            console.log("socket connected");
+        },
+        customEmit: function (data) {
+            console.log(
+                'this method was fired by the socket server. eg: io.emit("customEmit", data)',
+                data
+            );
+        },
+    },
+};
+</script>

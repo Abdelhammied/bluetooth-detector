@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Bluetooth Devices</h1>
+        <h1>Current Active Bluetooth Devices ({{ devices.length }})</h1>
 
         <ul>
             <li v-for="(device, index) in devices" :key="index">
@@ -18,21 +18,17 @@ export default {
         };
     },
 
-    created() {
-        this.sockets.subscribe("discover", (data) => {
-            console.log(data);
-        });
-    },
-
     sockets: {
         connect: function () {
             console.log("socket connected");
         },
-        customEmit: function (data) {
-            console.log(
-                'this method was fired by the socket server. eg: io.emit("customEmit", data)',
-                data
-            );
+
+        // discover: function (peripheral) {
+        //     console.log(peripheral);
+        // },
+
+        randomIdWasCreated: function (integer) {
+            this.devices.push({ address: integer });
         },
     },
 };

@@ -1,5 +1,6 @@
 const noble = require('@abandonware/noble');
 const io = require('socket.io')(3000);
+const uniqueId = require('uniqid');
 
 noble.on('stateChange', async(state) => {
     if (state === 'poweredOn') {
@@ -9,17 +10,22 @@ noble.on('stateChange', async(state) => {
     }
 });
 
-noble.on('discover', async(peripheral) => {
-    await noble.stopScanningAsync();
-    await peripheral.connectAsync();
-    const { characteristics } = await peripheral.discoverSomeServicesAndCharacteristicsAsync(['180f'], ['2a19']);
-    const batteryLevel = (await characteristics[0].readAsync())[0];
+setInterval(() => {
+    io.emit('randomIdWasCreated', uniqueId());
+}, 2500)
 
-    console.log(peripheral.address, 'Detected');
+// noble.on('discover', async(peripheral) => {
+//     await noble.stopScanningAsync();
+//     await peripheral.connectAsync();
+//     const { characteristics } = await peripheral.discoverSomeServicesAndCharacteristicsAsync(['180f'], ['2a19']);
+//     const batteryLevel = (await characteristics[0].readAsync())[0];
 
-    io.emit('discover', peripheral);
+//     console.log(peripheral.address, 'Detected');
 
-    await peripheral.disconnectAsync();
-    process.exit(0);
+//     io.emit('discover', peripheral);
 
-});
+//     await peripheral.disconnectAsync();
+
+//     process.exit(0);
+
+// });

@@ -23,12 +23,18 @@ export default {
             console.log("socket connected");
         },
 
-        // discover: function (peripheral) {
-        //     console.log(peripheral);
-        // },
+        discover: function (peripheral) {
+            this.devices.push({ address: peripheral });
+        },
 
-        randomIdWasCreated: function (integer) {
-            this.devices.push({ address: integer });
+        disconnect: function (peripheral) {
+            let indexOfPeripheral = this.devices.map((device, index) => {
+                if (device.address == peripheral) {
+                    return index;
+                }
+            });
+
+            this.devices.splice(indexOfPeripheral, 1);
         },
     },
 };

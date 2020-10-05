@@ -1,31 +1,26 @@
 const noble = require('@abandonware/noble');
 const io = require('socket.io')(3000);
-const uniqueId = require('uniqid');
 
 noble.on('stateChange', async(state) => {
+    console.log(state);
     if (state === 'poweredOn') {
-        console.log('Bluetooth is up and running');
-
-        await noble.startScanningAsync([], true);
+        noble.startScanningAsync([], false)
+            .then(res => {
+                console.log('we are up and runing');
+            }).catch(err => {
+                console.log(err);
+            });
     }
 });
 
-setInterval(() => {
-    io.emit('randomIdWasCreated', uniqueId());
-}, 2500)
+noble.on('discover', (peripheral) => {
+    io.emit('discover', peripheral.address)
 
-// noble.on('discover', async(peripheral) => {
-//     await noble.stopScanningAsync();
-//     await peripheral.connectAsync();
-//     const { characteristics } = await peripheral.discoverSomeServicesAndCharacteristicsAsync(['180f'], ['2a19']);
-//     const batteryLevel = (await characteristics[0].readAsync())[0];
+    console.log(peripheral.address, 'was discovered');
 
-//     console.log(peripheral.address, 'Detected');
+    peripheral.once('disconnect', (peripheral) => {
+        io.emit('disconnect', peripheral.address)
 
-//     io.emit('discover', peripheral);
-
-//     await peripheral.disconnectAsync();
-
-//     process.exit(0);
-
-// });
+        console.log(peripheral.address, 'was disconnected');
+    });
+});
